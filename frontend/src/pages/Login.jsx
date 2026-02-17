@@ -5,14 +5,38 @@ import { IoMdEyeOff } from "react-icons/io";
 import logo1 from '../assets/logo1.jpeg'
 import google from '../assets/google.jpg'
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import { serverUrl } from "../App";
+import { toast } from "react-toastify";
+import ClipLoader from "react-spinners/ClipLoader";
 
 function Login(){
     const [show, setShow] = useState(false);
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+    const [loading, setLoading] = useState(false);
+
+    const handleLogin = async () => {
+      setLoading(true);
+      try{
+        const result = await axios.post(serverUrl + "/api/auth/login",
+          {email, password}, {withCredentials: true})
+        console.log(result.data);
+        setLoading(false);
+        toast.success("Login Successful")
+        navigate("/")
+      } catch(error){
+        console.log(error);
+        setLoading(false);
+        toast.error(error.response.data.message)
+      }
+    }  
+
     const navigate = useNavigate();
       return (
     
         <div className='bg-[#dddbdb] w-[100vw] h-[100vh] flex items-center justify-center'>
-      <form className='w-[90%] md:w-200 h-150 bg-[white] shadow-xl rounded-2xl flex'>
+      <form className='w-[90%] md:w-200 h-150 bg-[white] shadow-xl rounded-2xl flex' onSubmit={(e)=>e.preventDefault()}>
         
         {/* left div */}
         <div className='md:w-[50%] w-[100%] h-[100%] flex flex-col items-center justify-center gap-3'>
@@ -23,11 +47,11 @@ function Login(){
           
           <div className='flex flex-col gap-1 w-[80%] items-start justify-center px-3'>
             <label htmlFor="email" className='font-semibold'>Email</label>
-            <input id ='email' type="email" className='border-1 w-[100%] h-[35px] border-[#e7e6e6] text-[15px] px-[20px]' placeholder='Your email' />
+            <input id ='email' type="email" className='border-1 w-[100%] h-[35px] border-[#e7e6e6] text-[15px] px-[20px]' placeholder='Your email' onChange={(e) => setEmail(e.target.value)} value={email}  />
           </div>
           <div className='flex flex-col gap-1 w-[80%] items-start justify-center px-3 relative'>
             <label htmlFor="password" className='font-semibold'>Password</label>
-            <input id ='password' type={show ? "text" : "password"} className='border-1 w-[100%] h-[35px] border-[#e7e6e6] text-[15px] px-[20px]' placeholder='Your password' />
+            <input id ='password' type={show ? "text" : "password"} className='border-1 w-[100%] h-[35px] border-[#e7e6e6] text-[15px] px-[20px]' placeholder='Your password' onChange={(e) => setPassword(e.target.value)} value={password} />
             {show ? 
           <IoEye className='absolute w-[20px] h-[20px] cursor-pointer right-[5%] bottom-[10%]' onClick = {() => setShow(prev => !prev)} />
            : <IoMdEyeOff className='absolute w-[20px] h-[20px] cursor-pointer right-[5%] bottom-[10%]' onClick = {() => setShow(prev => !prev)} />
@@ -35,7 +59,7 @@ function Login(){
           </div>
           
           
-          <button className='w-[80%] h-[40px] bg-[black] text-white rounded-[5px] cursor-pointer flex items-center justify-center'>Login</button>
+          <button className='w-[80%] h-[40px] bg-[black] text-white rounded-[5px] cursor-pointer flex items-center justify-center' disabled={loading} onClick={handleLogin}>{loading ? <ClipLoader size={30} color="white" /> : "Login"}</button>
           <span className='text-[13px] text-[#585757] cursor-pointer'>Forgot Password?</span>
           <div className='w-[80%] flex items-center gap-2'>
             <div className='w-[25%] h-[0.5px] bg-[#c4c4c4]'></div>
