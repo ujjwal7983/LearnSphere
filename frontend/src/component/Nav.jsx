@@ -19,7 +19,7 @@ function Nav() {
 
     const handleLogOut = async () => {
         try {
-            const result = await axios.get(serverUrl + "/api/auth/logout", { withCredentials: true });
+            const result = await axios.post(serverUrl + "/api/auth/logout", { withCredentials: true });
             dispatch(setUserData(null));
             console.log(result.data);
             toast.success("Logout Successfully");
@@ -102,7 +102,47 @@ function Nav() {
                         className='w-[35px] h-[35px] fill-white absolute top-5 right-[4%] cursor-pointer'
                         onClick={() => setShowHam(prev => !prev)}
                     />
+                    {!userData && (
+                        <IoPersonCircle
+                            className='w-[50px] h-[50px] fill-black cursor-pointer'
+                           
+                        />
+                    )}
 
+                    {userData && (
+                        <div
+                            className='w-[50px] h-[50px] rounded-full text-white flex items-center justify-center text-[20px] border-2 bg-black border-white cursor-pointer'
+                            
+                        >
+                            {userData?.name?.slice(0, 1).toUpperCase()}
+                        </div>
+                    )}
+                    <div className='w-[200px] h-[65px] border-2 border-white text-white rounded-[10px] bg-[black] flex items-center justify-center font-light text-[18px] cursor-pointer'>
+                            My Profile
+                    </div>
+                    <div className='w-[200px] h-[65px] border-2 border-white text-white rounded-[10px] bg-[black] flex items-center justify-center font-light text-[18px] cursor-pointer'>
+                            My Courses
+                    </div>
+                    {userData?.role === "educator" && (
+                        <div className='w-[200px] h-[65px] border-2 border-white text-white bg-[black] rounded-[10px] flex items-center justify-center font-light text-[18px] cursor-pointer'>
+                            Dashboard
+                        </div>
+                    )}
+                    {!userData ? (
+                        <span
+                            className='w-[200px] h-[65px] border-2 border-white text-white bg-[black] rounded-[10px] flex items-center justify-center font-light text-[18px] cursor-pointer'
+                            onClick={() => navigate("/login")}
+                        >
+                            Login
+                        </span>
+                    ) : (
+                        <span
+                            className='w-[200px] h-[65px] border-2 border-white text-white bg-[black] rounded-[10px] flex items-center justify-center font-light text-[18px] cursor-pointer'
+                            onClick={handleLogOut}
+                        >
+                            Logout
+                        </span>
+                    )}
                 </div>
             </div>
         </div>
