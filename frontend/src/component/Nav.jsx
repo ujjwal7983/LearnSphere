@@ -91,7 +91,7 @@ function Nav() {
                 </div>
 
                 <RxHamburgerMenu
-                    className='w-[35px] h-[35px] lg:hidden text-black cursor-pointer'
+                    className='w-[35px] h-[35px] lg:hidden text-white cursor-pointer'
                     onClick={() => setShowHam(prev => !prev)}
                 />
 
@@ -105,23 +105,23 @@ function Nav() {
                     {!userData && (
                         <IoPersonCircle
                             className='w-[50px] h-[50px] fill-black cursor-pointer'
-                           
+
                         />
                     )}
 
                     {userData && (
                         <div
                             className='w-[50px] h-[50px] rounded-full text-white flex items-center justify-center text-[20px] border-2 bg-black border-white cursor-pointer'
-                            
+
                         >
                             {userData?.name?.slice(0, 1).toUpperCase()}
                         </div>
                     )}
-                    <div className='w-[200px] h-[65px] border-2 border-white text-white rounded-[10px] bg-[black] flex items-center justify-center font-light text-[18px] cursor-pointer'  onClick={() => navigate("/profile")}>
-                            My Profile
+                    <div className='w-[200px] h-[65px] border-2 border-white text-white rounded-[10px] bg-[black] flex items-center justify-center font-light text-[18px] cursor-pointer' onClick={() => navigate("/profile")}>
+                        My Profile
                     </div>
                     <div className='w-[200px] h-[65px] border-2 border-white text-white rounded-[10px] bg-[black] flex items-center justify-center font-light text-[18px] cursor-pointer'>
-                            My Courses
+                        My Courses
                     </div>
                     {userData?.role === "educator" && (
                         <div className='w-[200px] h-[65px] border-2 border-white text-white bg-[black] rounded-[10px] flex items-center justify-center font-light text-[18px] cursor-pointer'>
