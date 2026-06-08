@@ -10,6 +10,7 @@ import { IoPersonCircle } from "react-icons/io5";
 import { RxHamburgerMenu } from "react-icons/rx";
 import { GiSplitCross } from "react-icons/gi";
 
+
 function Nav() {
     const { userData } = useSelector(state => state.user);
     const navigate = useNavigate();
@@ -46,17 +47,17 @@ function Nav() {
                         />
                     )}
 
-                    {userData && (
+                    {userData?.photoUrl ? <img src={userData?.photoUrl} className="w-[50px] h-[50px] rounded-full text-white flex items-center justify-center text-[20px] border-2 bg-black border-white cursor-pointer" onClick={() => setShow(prev => !prev)}/> : 
                         <div
                             className='w-[50px] h-[50px] rounded-full text-white flex items-center justify-center text-[20px] border-2 bg-black border-white cursor-pointer'
                             onClick={() => setShow(prev => !prev)}
                         >
                             {userData?.name?.slice(0, 1).toUpperCase()}
                         </div>
-                    )}
+                    }
 
                     {userData?.role === "educator" && (
-                        <div className='px-[20px] py-[10px] border-2 border-white text-white rounded-[10px] text-[18px] cursor-pointer'>
+                        <div className='px-[20px] py-[10px] border-2 border-white text-white rounded-[10px] text-[18px] cursor-pointer' onClick={() => navigate("/dashboard")}>
                             Dashboard
                         </div>
                     )}
@@ -109,7 +110,7 @@ function Nav() {
                         />
                     )}
 
-                    {userData && (
+                    {userData?.photoUrl ? <img src={userData?.photoUrl} className="w-[50px] h-[50px] rounded-full text-white flex items-center justify-center text-[20px] border-2 bg-black border-white cursor-pointer" /> : (
                         <div
                             className='w-[50px] h-[50px] rounded-full text-white flex items-center justify-center text-[20px] border-2 bg-black border-white cursor-pointer'
 
@@ -124,7 +125,7 @@ function Nav() {
                         My Courses
                     </div>
                     {userData?.role === "educator" && (
-                        <div className='w-[200px] h-[65px] border-2 border-white text-white bg-[black] rounded-[10px] flex items-center justify-center font-light text-[18px] cursor-pointer'>
+                        <div className='w-[200px] h-[65px] border-2 border-white text-white bg-[black] rounded-[10px] flex items-center justify-center font-light text-[18px] cursor-pointer' onClick={() => navigate("/dashboard")}>
                             Dashboard
                         </div>
                     )}
