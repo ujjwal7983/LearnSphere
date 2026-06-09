@@ -3,7 +3,7 @@ import home from "../assets/home1.jpg"
 import Nav from '../component/Nav'
 import { SiViaplay } from "react-icons/si";
 import Logos from '../component/Logos';
-// import Cardspage from '../components/Cardspage';
+import CardPage from '../component/Cardpage';
 import ExploreCourses from '../component/ExploreCourses';
 // import About from '../components/About';
 import ai from '../assets/ai.png'
@@ -37,6 +37,7 @@ function Home() {
             </div>
             <Logos />
             <ExploreCourses />
+            <CardPage />
         </div>
 
     )

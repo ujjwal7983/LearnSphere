@@ -17,10 +17,12 @@ import EditCourse from './pages/Educator/EditCourse'
 
 export const serverUrl = "http://localhost:8000"
 import {ToastContainer} from 'react-toastify'
+import getPublishedCourse  from './customHooks/getPublishedCourse'
 // import getCreatorCourse from './customHooks/getCreatorCourse'
 function App() {
      getCurrentUser();
      getCreatorCourse();
+     getPublishedCourse();
      const {userData} = useSelector(state => state.user);
   return (
     <>
