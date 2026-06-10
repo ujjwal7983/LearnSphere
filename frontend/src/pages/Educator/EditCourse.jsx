@@ -106,6 +106,12 @@ function EditCourse() {
       );
 
       console.log(result.data);
+      const published = await axios.get(
+  serverUrl + "/api/course/getpublished",
+  { withCredentials: true }
+);
+
+dispatch(setCourseData(published.data.courses));
 
       setLoading(false);
 
