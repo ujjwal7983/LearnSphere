@@ -19,6 +19,7 @@ import AllCourses from './pages/AllCourses'
 export const serverUrl = "http://localhost:8000"
 import {ToastContainer} from 'react-toastify'
 import getPublishedCourse  from './customHooks/getPublishedCourse'
+import CreateLecture from './pages/Educator/CreateLecture'
 // import getCreatorCourse from './customHooks/getCreatorCourse'
 function App() {
      getCurrentUser();
@@ -41,7 +42,8 @@ function App() {
       <Route path = '/courses' element={userData?.role === "educator" ? <Courses/> : <Navigate to={"/signup"}/>} />
       <Route path='/createcourses' element={userData?.role === "educator" ? <CreateCourses/> : <Navigate to={"/signup"}/>} />
       <Route path='/editcourse/:courseId' element={userData?.role === "educator" ? <EditCourse/> : <Navigate to={"/signup"}/>} />
-    
+      <Route path='/createlecture/:courseId' element={userData?.role === "educator" ? <CreateLecture/> : <Navigate to={"/signup"}/>} />
+
     </Routes>
     </>
   )

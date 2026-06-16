@@ -180,7 +180,9 @@ dispatch(setCourseData(published.data.courses));
         <h2 className='text-2xl font-semibold md:pl-[60px]'>
           Add Detail Information regarding the Course
         </h2>
-
+        <div className='space-x-2 space-y-2' >
+             <button className='bg-black text-white px-4 py-2 rounded-md' onClick={() =>navigate(`/createLecture/${selectCourse?._id}`)} > Go to Lecture Page</button>
+        </div>   
       </div>
 
       {/* form details */}
