@@ -1,6 +1,6 @@
 import express from "express"
 import isAuth from "../middleware/isAuth.js"
-import { createCourse, editCourse, getCourseById, getCreatorCourses, getPublishedCourses, removeCourse} from "../controller/courseController.js"
+import { createCourse, editCourse, getCourseById, getCreatorCourses, getPublishedCourses, removeCourse, getCreatorById} from "../controller/courseController.js"
 import { createLecture, editLecture, getCourseLecture, removeLecture } from "../controller/courseController.js"
 import upload from "../middleware/multer.js"
 
@@ -17,7 +17,7 @@ courseRouter.post("/createlecture/:courseId",isAuth,createLecture)
 courseRouter.get("/getcourselecture/:courseId",isAuth,getCourseLecture)
 courseRouter.post("/editlecture/:lectureId",isAuth,upload.single("videoUrl"),editLecture)
 courseRouter.delete("/removelecture/:lectureId",isAuth,removeLecture)
-// courseRouter.post("/getcreator",isAuth,getCreatorById)
+courseRouter.post("/getcreator",isAuth,getCreatorById)
 
 
 

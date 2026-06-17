@@ -1,7 +1,7 @@
 import Course from "../model/courseModel.js"
 import  uploadOnCloudinary  from "../config/cloudinary.js";
 import Lecture from "../model/lectureModel.js"
-
+import User from "../model/userModel.js";
 export const createCourse = async (req, res) => {
     try {
         const { title, category } = req.body
@@ -21,7 +21,7 @@ export const createCourse = async (req, res) => {
 
 export const getPublishedCourses =  async (req, res) => {
     try {
-        const courses = await Course.find({ isPublished: true })
+        const courses = await Course.find({ isPublished: true }).populate("lectures")
         if( !courses ){
             return res.status(404).json({ message: "No courses found" })
         }
@@ -181,3 +181,28 @@ export const removeLecture = async (req,res) => {
         return res.status(500).json({message:`Failed to remove Lectures ${error}`})
     }
 }
+
+
+export const getCreatorById = async (req, res) => {
+  try {
+
+    const { userId } = req.body;
+
+    const user = await User.findById(userId).select("-password");
+
+    if (!user) {
+      return res.status(404).json({
+        message: "User is not Found"
+      });
+    }
+
+    return res.status(200).json(user);
+
+  } catch (error) {
+
+    return res.status(500).json({
+      message: `Failed to get Creator ${error}`
+    });
+
+  }
+}; 
