@@ -9,6 +9,7 @@ import { FaLock, FaPlayCircle } from "react-icons/fa";
 import { toast } from 'react-toastify';
 import { FaStar } from "react-icons/fa6";
 import img from "../assets/empty.jpg"
+import Card from '../component/Card';
 
 function ViewCourse() {
 
@@ -269,9 +270,37 @@ function ViewCourse() {
                         </button>
                     </div>
 
-
-
                 </div>
+                {/* Instructor Info */}
+        <div className="flex items-center gap-4 pt-4 border-t ">
+          {creatorData?.photoUrl ?<img
+            src={creatorData?.photoUrl}
+            alt="Instructor"
+            className="w-16 h-16 rounded-full object-cover"
+          />: <img
+            src={img}
+            alt="Instructor"
+            className="w-16 h-16 rounded-full object-cover"
+          />
+          }
+          <div>
+            <h3 className="text-lg font-semibold">{creatorData?.name}</h3>
+            <p className="md:text-sm text-gray-600 text-[10px] ">{creatorData?.description}</p>
+            <p className="md:text-sm text-gray-600 text-[10px] ">{creatorData?.email}</p>
+            
+          </div>
+        </div>
+        <div>
+          <p className='text-xl font-semibold mb-2'>Other Published Courses by the Educator -</p>
+        <div className='w-full transition-all duration-300 py-[20px]   flex items-start justify-center lg:justify-start flex-wrap gap-6 lg:px-[80px] '>
+          
+            {
+                creatorCourses?.map((course,index)=>(
+                    <Card key={index} thumbnail={course.thumbnail} title={course.title} id={course._id} price={course.price} category={course.category}/>
+                ))
+            }
+        </div>
+      </div>
 
 
             </div>

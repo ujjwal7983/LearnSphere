@@ -22,7 +22,7 @@ import {ToastContainer} from 'react-toastify'
 import getPublishedCourse  from './customHooks/getPublishedCourse'
 import CreateLecture from './pages/Educator/CreateLecture'
 import EditLecture from './pages/Educator/EditLecture'
-// import getCreatorCourse from './customHooks/getCreatorCourse'
+import ScrollToTop from './component/ScrollToTop'
 function App() {
      getCurrentUser();
      getCreatorCourse();
@@ -31,6 +31,7 @@ function App() {
   return (
     <>
     <ToastContainer />
+    <ScrollToTop />
     <Routes>
       <Route path="/" element={<Home />} />
       <Route path="/signup" element={!userData ?<Signup /> : <Navigate to={"/"}/>} />
