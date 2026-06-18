@@ -16,6 +16,7 @@ import CreateCourses from './pages/Educator/CreateCourses'
 import EditCourse from './pages/Educator/EditCourse'
 import AllCourses from './pages/AllCourses'
 import ViewCourse from './pages/ViewCourses'
+import ViewLectures from './pages/ViewLectures'
 
 export const serverUrl = "http://localhost:8000"
 import {ToastContainer} from 'react-toastify'
@@ -48,6 +49,7 @@ function App() {
       <Route path='/createlecture/:courseId' element={userData?.role === "educator" ? <CreateLecture/> : <Navigate to={"/signup"}/>} />
       <Route path='/editlecture/:courseId/:lectureId' element={userData?.role === "educator" ? <EditLecture/> : <Navigate to={"/signup"}/>} />
       <Route path='/viewcourse/:courseId' element={userData?.role === "educator" ? <ViewCourse/> : <Navigate to={"/signup"}/>} />
+      <Route path='/viewlecture/:courseId' element={userData?.role === "educator" ? <ViewLectures/> : <Navigate to={"/signup"}/>} />
 
     </Routes>
     </>

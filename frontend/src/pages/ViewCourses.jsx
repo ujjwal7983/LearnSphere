@@ -18,9 +18,11 @@ function ViewCourse() {
     const { courseData } = useSelector(state => state.course)
     const { selectedCourse } = useSelector(state => state.course)
     const [selectedLecture, setSelectedLecture] = useState(null);
+    const { userData } = useSelector(state => state.user)
     const dispatch = useDispatch()
     const [creatorData, setCreatorData] = useState(null)
     const [creatorCourses, setCreatorCourses] = useState(null)
+    const [isEnrolled, setIsEnrolled] = useState(false);
 
 
 
@@ -37,52 +39,107 @@ function ViewCourse() {
         })
 
     }
+    const checkEnrollment = () => {
+    const verify = userData?.enrolledCourses?.some((c) =>
+        (typeof c === "string" ? c : c._id).toString() ===
+        courseId?.toString()
+    );
 
-    
+    if (verify) {
+        setIsEnrolled(true);
+    }
+};
+
+
 
     useEffect(() => {
         fetchCourseData()
-        // checkEnrollment()
-    }, [courseId, courseData])
+        checkEnrollment()
+    }, [courseId, courseData, userData])
 
-      // Fetch creator info once course data is available
-  useEffect(() => {
-    const handleCreator = async () => {
-      if (selectedCourse?.creator) {
-        try {
-          const result = await axios.post(
-            serverUrl + "/api/course/getcreator",
-            { userId: selectedCourse?.creator },
-            { withCredentials: true }
-          );
-          setCreatorData(result.data);
-          console.log(result.data)
-        } catch (error) {
-          console.error("Error fetching creator:", error);
+    // Fetch creator info once course data is available
+    useEffect(() => {
+        const handleCreator = async () => {
+            if (selectedCourse?.creator) {
+                try {
+                    const result = await axios.post(
+                        serverUrl + "/api/course/getcreator",
+                        { userId: selectedCourse?.creator },
+                        { withCredentials: true }
+                    );
+                    setCreatorData(result.data);
+                    console.log(result.data)
+                } catch (error) {
+                    console.error("Error fetching creator:", error);
+                }
+            }
+        };
+
+        handleCreator();
+
+
+    }, [selectedCourse]);
+
+    useEffect(() => {
+
+        if (creatorData?._id && courseData.length > 0) {
+
+            const creatorCourse = courseData.filter(
+                (course) =>
+                    course.creator === creatorData?._id &&
+                    course._id !== courseId
+            );
+
+            setCreatorCourses(creatorCourse);
+
         }
-      }
+
+    }, [creatorData, courseData]);
+
+    const handleEnroll = async (userId, courseId) => {
+        try {
+
+            const orderData = await axios.post(
+                serverUrl + "/api/order/razorpay-order",
+                { userId, courseId },
+                { withCredentials: true }
+            );
+
+            console.log(orderData.data)
+            const options = {
+                key: import.meta.env.VITE_RAZORPAY_KEY_ID,
+                amount: orderData.data.order.amount,
+                currency: "INR",
+                name: "Learn Sphere",
+                description: "COURSE ENROLLMENT PAYMENT",
+                order_id: orderData.data.order.id,
+
+                handler: async function (response) {
+                    console.log("RazorPay Response", response)
+                    try {
+                        const verifyPayment = await axios.post(erverUrl + "/api/order/verifypayment", {
+                            ...response,
+                            courseId,
+                        }, { withCredentials: true })
+                        setIsEnrolled(true)
+                        toast.success(verifyPayment.data.message)
+                    } catch (error) {
+                        toast.error(error.response.data.message || "Payment verification failed")
+                    }
+                }
+
+            }
+
+            const rzp = new window.Razorpay(options)
+            rzp.open()
+
+        } catch (error) {
+
+            console.log(error);
+            toast.error(error.response.data.message || "something went wrong while enrolling in the course")
+
+        }
     };
-
-    handleCreator();
-
-    
-  }, [selectedCourse]);
- 
-   useEffect(() => {
-
-  if (creatorData?._id && courseData.length > 0) {
-
-    const creatorCourse = courseData.filter(
-      (course) =>
-        course.creator === creatorData?._id &&
-        course._id !== courseId
-    );
-
-    setCreatorCourses(creatorCourse);
-
-  }
-
-}, [creatorData, courseData]);
 
 
     return (
@@ -148,11 +205,22 @@ function ViewCourse() {
 
                         </ul>
 
-                        <button
-                            className='bg-[black] text-white px-6 py-2 rounded hover:bg-gray-700 mt-3 cursor-pointer'
-                        >
-                            Enroll Now
-                        </button>
+                        {
+                            !isEnrolled ? (
+                                <button
+                                    className='bg-[black] text-white px-6 py-2 rounded hover:bg-gray-700 mt-3 cursor-pointer'
+                                    onClick={() => handleEnroll(userData._id, courseId)}
+                                >
+                                    Enroll Now
+                                </button>
+                            ) : (
+                                <button
+                                    className='bg-green-100 text-green-500 px-6 py-2 rounded hover:bg-gray-700 mt-3 cursor-pointer' onClick={() => navigate(`/viewlecture/${courseId}`)}
+                                >
+                                    Watch Now
+                                </button>
+                            )
+                        }
 
                     </div>
 
@@ -263,8 +331,8 @@ function ViewCourse() {
                         />
                         <button
 
-                            className="bg-black text-white mt-3 px-4 py-2 rounded hover:bg-gray-800" 
-                            // onClick={handleReview}
+                            className="bg-black text-white mt-3 px-4 py-2 rounded hover:bg-gray-800"
+                        // onClick={handleReview}
                         >
                             Submit Review
                         </button>
@@ -272,35 +340,35 @@ function ViewCourse() {
 
                 </div>
                 {/* Instructor Info */}
-        <div className="flex items-center gap-4 pt-4 border-t ">
-          {creatorData?.photoUrl ?<img
-            src={creatorData?.photoUrl}
-            alt="Instructor"
-            className="w-16 h-16 rounded-full object-cover"
-          />: <img
-            src={img}
-            alt="Instructor"
-            className="w-16 h-16 rounded-full object-cover"
-          />
-          }
-          <div>
-            <h3 className="text-lg font-semibold">{creatorData?.name}</h3>
-            <p className="md:text-sm text-gray-600 text-[10px] ">{creatorData?.description}</p>
-            <p className="md:text-sm text-gray-600 text-[10px] ">{creatorData?.email}</p>
-            
-          </div>
-        </div>
-        <div>
-          <p className='text-xl font-semibold mb-2'>Other Published Courses by the Educator -</p>
-        <div className='w-full transition-all duration-300 py-[20px]   flex items-start justify-center lg:justify-start flex-wrap gap-6 lg:px-[80px] '>
-          
-            {
-                creatorCourses?.map((course,index)=>(
-                    <Card key={index} thumbnail={course.thumbnail} title={course.title} id={course._id} price={course.price} category={course.category}/>
-                ))
-            }
-        </div>
-      </div>
+                <div className="flex items-center gap-4 pt-4 border-t ">
+                    {creatorData?.photoUrl ? <img
+                        src={creatorData?.photoUrl}
+                        alt="Instructor"
+                        className="w-16 h-16 rounded-full object-cover"
+                    /> : <img
+                        src={img}
+                        alt="Instructor"
+                        className="w-16 h-16 rounded-full object-cover"
+                    />
+                    }
+                    <div>
+                        <h3 className="text-lg font-semibold">{creatorData?.name}</h3>
+                        <p className="md:text-sm text-gray-600 text-[10px] ">{creatorData?.description}</p>
+                        <p className="md:text-sm text-gray-600 text-[10px] ">{creatorData?.email}</p>
+
+                    </div>
+                </div>
+                <div>
+                    <p className='text-xl font-semibold mb-2'>Other Published Courses by the Educator -</p>
+                    <div className='w-full transition-all duration-300 py-[20px]   flex items-start justify-center lg:justify-start flex-wrap gap-6 lg:px-[80px] '>
+
+                        {
+                            creatorCourses?.map((course, index) => (
+                                <Card key={index} thumbnail={course.thumbnail} title={course.title} id={course._id} price={course.price} category={course.category} />
+                            ))
+                        }
+                    </div>
+                </div>
 
 
             </div>

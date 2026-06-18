@@ -6,6 +6,7 @@ import cookiesParser from "cookie-parser";
 import authRoute from "./routes/authRoute.js";
 import userRoute from "./routes/userRoute.js";
 import courseRouter from "./routes/courseRoute.js";
+import paymentRouter from "./routes/paymentRoute.js";
 
 dotenv.config();
 import cors from 'cors';
@@ -23,6 +24,8 @@ app.use(cors({
 app.use("/api/auth", authRoute);
 app.use("/api/user", userRoute);
 app.use("/api/course", courseRouter);
+app.use("/api/order", paymentRouter);
+
 
 
 app.get("/", (req, res) => {
