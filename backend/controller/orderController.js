@@ -33,6 +33,8 @@ export const verifyPayment = async (req, res) => {
     try {
         const { courseId, userId, razorpay_order_id } = req.body;
         const orderInfo = await RazorPayInstance.orders.fetch(razorpay_order_id)
+        console.log("ORDER =", orderInfo)
+        console.log("STATUS =", orderInfo.status)
         if (orderInfo.status === "paid") {
             const user = await User.findById(userId)
             if (!user.enrolledCourses.includes(courseId)) {

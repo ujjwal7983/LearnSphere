@@ -117,9 +117,10 @@ function ViewCourse() {
                 handler: async function (response) {
                     console.log("RazorPay Response", response)
                     try {
-                        const verifyPayment = await axios.post(erverUrl + "/api/order/verifypayment", {
+                        const verifyPayment = await axios.post(serverUrl + "/api/order/verifypayment", {
                             ...response,
                             courseId,
+                            userId,
                         }, { withCredentials: true })
                         setIsEnrolled(true)
                         toast.success(verifyPayment.data.message)
