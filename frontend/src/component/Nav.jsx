@@ -9,6 +9,7 @@ import { toast } from "react-toastify";
 import { IoPersonCircle } from "react-icons/io5";
 import { RxHamburgerMenu } from "react-icons/rx";
 import { GiSplitCross } from "react-icons/gi";
+import myCourses from "../pages/MyEnrolledCourses";
 
 
 function Nav() {
@@ -83,7 +84,7 @@ function Nav() {
                             <span className='bg-black text-white px-[30px] py-[10px] rounded-2xl hover:bg-gray-600' onClick={() => navigate("/profile")}>
                                 Profile
                             </span>
-                            <span className='bg-black text-white px-[30px] py-[10px] rounded-2xl hover:bg-gray-600'>
+                            <span className='bg-black text-white px-[30px] py-[10px] rounded-2xl hover:bg-gray-600' onClick={() => navigate("/mycourses")}>
                                 My Courses
                             </span>
                         </div>
@@ -121,7 +122,7 @@ function Nav() {
                     <div className='w-[200px] h-[65px] border-2 border-white text-white rounded-[10px] bg-[black] flex items-center justify-center font-light text-[18px] cursor-pointer' onClick={() => navigate("/profile")}>
                         My Profile
                     </div>
-                    <div className='w-[200px] h-[65px] border-2 border-white text-white rounded-[10px] bg-[black] flex items-center justify-center font-light text-[18px] cursor-pointer'>
+                    <div className='w-[200px] h-[65px] border-2 border-white text-white rounded-[10px] bg-[black] flex items-center justify-center font-light text-[18px] cursor-pointer' onClick={() => navigate("/mycourses")}>
                         My Courses
                     </div>
                     {userData?.role === "educator" && (

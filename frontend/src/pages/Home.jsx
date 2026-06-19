@@ -5,11 +5,11 @@ import { SiViaplay } from "react-icons/si";
 import Logos from '../component/Logos';
 import CardPage from '../component/Cardpage';
 import ExploreCourses from '../component/ExploreCourses';
-// import About from '../components/About';
+import About from '../component/About';
 import ai from '../assets/ai.png'
 import ai1 from '../assets/SearchAi.png'
 // import ReviewPage from '../components/ReviewPage';
-// import Footer from '../components/Footer';
+import Footer from '../component/Footer';
 import { useNavigate } from 'react-router-dom';
 function Home() {
     const navigate = useNavigate()
@@ -38,6 +38,8 @@ function Home() {
             <Logos />
             <ExploreCourses />
             <CardPage />
+            <About />
+            <Footer />
         </div>
 
     )

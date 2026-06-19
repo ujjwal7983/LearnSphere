@@ -4,6 +4,7 @@ import { useSelector } from 'react-redux'
 import { useNavigate, useParams } from 'react-router-dom'
 import { serverUrl } from '../App'
 import { FaArrowLeftLong } from "react-icons/fa6";
+import { FaPlayCircle } from "react-icons/fa";
 
 function ViewLectures() {
 
@@ -62,8 +63,77 @@ function ViewLectures() {
           </div>
 
         </div>
+        {/* video player */}
+        <div className='aspect-video bg-black rounded-xl overflow-hidden mb-4 border border-gray-300'>
+          {selectedLecture?.videoUrl ? (
+            <video
+              className='w-full h-full object-cover'
+              src={selectedLecture?.videoUrl}
+              controls
+            />
+          ) : (
+            <div className='flex items-center justify-center h-full text-white'>
+              Select a lecture to start watching
+            </div>
+          )}
+        </div>
+        {/* Selected Lecture Info */}
+        <div className="mt-2">
+          <h2 className="text-lg font-semibold text-gray-800">{selectedLecture?.lectureTitle}</h2>
 
+        </div>
       </div>
+
+      {/* Right - All Lectures + Creator Info */}
+      <div className="w-full md:w-1/3 bg-white rounded-2xl shadow-md p-6 border border-gray-200 h-fit">
+        <h2 className="text-xl font-bold mb-4 text-gray-800">All Lectures</h2>
+        <div className="flex flex-col gap-3 mb-6">
+          {selectedCourse?.lectures?.length > 0 ? (
+            selectedCourse.lectures.map((lecture, index) => (
+              <button
+                key={index}
+                onClick={() => setSelectedLecture(lecture)}
+                className={`flex items-center justify-between p-3 rounded-lg border transition text-left ${selectedLecture?._id === lecture._id
+                    ? 'bg-gray-200 border-gray-500'
+                    : 'hover:bg-gray-50 border-gray-300'
+                  }`}
+              >
+                <div>
+                  <h4 className="text-sm font-semibold text-gray-800">{lecture.lectureTitle}</h4>
+
+                </div>
+                <FaPlayCircle className="text-black text-xl" />
+              </button>
+            ))
+          ) : (
+            <p className="text-gray-500">No lectures available.</p>
+          )}
+        </div>
+        {/* Creator Info */} 
+        {creatorData && (
+          <div className="mt-4 border-t pt-4">
+            <h3 className="text-md font-semibold text-gray-700 mb-3">Educator</h3>
+            <div className="flex items-center gap-4">
+              <img
+                src={creatorData?.photoUrl || '/default-avatar.png'}
+                alt="Instructor"
+                className="w-14 h-14 rounded-full object-cover border"
+              />
+              <div>
+                <h4 className="text-base font-medium text-gray-800">{creatorData?.name}</h4>
+                <p className="text-sm text-gray-600">
+                  {creatorData?.description || 'No bio available.'}
+                </p>
+                <p className="text-sm text-gray-600">
+                  {creatorData?.email || 'No bio available.'}
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+
+
 
     </div>
   )
