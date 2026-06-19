@@ -10,6 +10,9 @@ import { toast } from 'react-toastify';
 import { FaStar } from "react-icons/fa6";
 import img from "../assets/empty.jpg"
 import Card from '../component/Card';
+import ClipLoader from "react-spinners/ClipLoader";
+
+
 
 function ViewCourse() {
 
@@ -23,6 +26,9 @@ function ViewCourse() {
     const [creatorData, setCreatorData] = useState(null)
     const [creatorCourses, setCreatorCourses] = useState(null)
     const [isEnrolled, setIsEnrolled] = useState(false);
+    const [rating, setRating] = useState(0);
+    const [comment, setComment] = useState("");
+    const [loading, setLoading] = useState(false);
 
 
 
@@ -40,15 +46,15 @@ function ViewCourse() {
 
     }
     const checkEnrollment = () => {
-    const verify = userData?.enrolledCourses?.some((c) =>
-        (typeof c === "string" ? c : c._id).toString() ===
-        courseId?.toString()
-    );
+        const verify = userData?.enrolledCourses?.some((c) =>
+            (typeof c === "string" ? c : c._id).toString() ===
+            courseId?.toString()
+        );
 
-    if (verify) {
-        setIsEnrolled(true);
-    }
-};
+        if (verify) {
+            setIsEnrolled(true);
+        }
+    };
 
 
 
@@ -139,6 +145,26 @@ function ViewCourse() {
             console.log(error);
             toast.error(error.response.data.message || "something went wrong while enrolling in the course")
 
+        }
+    };
+
+    const handleReview = async () => {
+        setLoading(true);
+        try {
+            const result = await axios.post(serverUrl + "/api/review/createreview", {
+                rating,
+                comment,
+                courseId
+            }, { withCredentials: true });
+            setLoading(false);
+            toast.success("Review Added");
+            console.log(result.data);
+            setRating(0);
+            setComment("");
+        } catch (error) {
+            console.error("Error submitting review:", error);
+            setLoading(false);
+            toast.error(error.response.data.message || "Failed to submit review");
         }
     };
 
@@ -319,8 +345,8 @@ function ViewCourse() {
                             {
                                 [1, 2, 3, 4, 5].map((star) => (
                                     <FaStar
-                                        key={star}
-                                        className='fill-amber-300'
+                                        key={star} onClick={() => setRating(star)}
+                                        className={star <= rating ? 'fill-amber-300' : 'fill-gray-300'}
                                     />
                                 ))
                             }
@@ -329,13 +355,19 @@ function ViewCourse() {
                             className='w-full border border-gray-300 rounded-lg p-2'
                             placeholder='Write your review here...'
                             rows={3}
+                            value={comment}
+                            onChange={(e) => setComment(e.target.value)}
                         />
                         <button
-
-                            className="bg-black text-white mt-3 px-4 py-2 rounded hover:bg-gray-800"
-                        // onClick={handleReview}
+                            className='bg-black text-white mt-3 px-4 py-2 rounded hover:bg-gray-800'
+                            disabled={loading}
+                            onClick={() => handleReview()}
                         >
-                            Submit Review
+                            {loading ? (
+                                <ClipLoader size={30} color='white' />
+                            ) : (
+                                "Submit Review"
+                            )}
                         </button>
                     </div>
 

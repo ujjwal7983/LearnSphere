@@ -10,6 +10,7 @@ import paymentRouter from "./routes/paymentRoute.js";
 
 dotenv.config();
 import cors from 'cors';
+import reviewRouter from './routes/reviewRoute.js';
 
 const app = express();
 const port = process.env.PORT || 8000;
@@ -25,6 +26,7 @@ app.use("/api/auth", authRoute);
 app.use("/api/user", userRoute);
 app.use("/api/course", courseRouter);
 app.use("/api/order", paymentRouter);
+app.use("/api/review", reviewRouter);
 
 
 
