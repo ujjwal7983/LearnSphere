@@ -18,7 +18,7 @@ app.use(express.json());
 app.use(cookiesParser());
 
 app.use(cors({
-    origin: "http://localhost:5173",
+    origin: "https://learnsphere-1-xmil.onrender.com",
     credentials: true,
 }))
 
