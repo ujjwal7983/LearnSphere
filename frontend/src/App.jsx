@@ -26,6 +26,7 @@ import CreateLecture from './pages/Educator/CreateLecture'
 import EditLecture from './pages/Educator/EditLecture'
 import ScrollToTop from './component/ScrollToTop'
 import getAllReviews from './customHooks/getAllReviews'
+import SearchWithAi from './pages/SearchWithAi'
 function App() {
      getCurrentUser();
      getCreatorCourse();
@@ -54,6 +55,7 @@ function App() {
       <Route path='/viewcourse/:courseId' element={userData?.role === "educator" ? <ViewCourse/> : <Navigate to={"/signup"}/>} />
       <Route path='/viewlecture/:courseId' element={userData ? <ViewLectures/> : <Navigate to={"/signup"}/>} />
       <Route path='/mycourses' element={userData ? <MyEnrolledCourses/> : <Navigate to={"/signup"}/>} />
+      <Route path='/search' element={userData ? <SearchWithAi/> : <Navigate to={"/signup"}/>} />
 
     </Routes>
     </>
