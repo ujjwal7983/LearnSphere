@@ -19,7 +19,7 @@ import ViewCourse from './pages/ViewCourses'
 import ViewLectures from './pages/ViewLectures'
 import MyEnrolledCourses from './pages/MyEnrolledCourses'
 
-export const serverUrl = "http://localhost:8000"
+export const serverUrl = "https://learnsphere1-2g57.onrender.com"
 import {ToastContainer} from 'react-toastify'
 import getPublishedCourse  from './customHooks/getPublishedCourse'
 import CreateLecture from './pages/Educator/CreateLecture'
