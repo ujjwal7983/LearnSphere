@@ -8,7 +8,7 @@ import ExploreCourses from '../component/ExploreCourses';
 import About from '../component/About';
 import ai from '../assets/ai.png'
 import ai1 from '../assets/SearchAi.png'
-// import ReviewPage from '../components/ReviewPage';
+import ReviewPage from '../component/ReviewPage';
 import Footer from '../component/Footer';
 import { useNavigate } from 'react-router-dom';
 function Home() {
@@ -40,6 +40,7 @@ function Home() {
             <CardPage />
             <About />
             <Footer />
+            <ReviewPage />
         </div>
 
     )

@@ -46,7 +46,7 @@ export const createReview = async (req, res) => {
 export const getReviews = async (req, res) => {
   try {
     const reviews = await Review.find({})
-      .populate("user", "name photoUrl role") // Populate user name & photo
+      .populate("user course") // Populate user name & photo
       .sort({ reviewedAt: -1 }); // Optional: latest first
 
     return res.status(200).json(

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 import Card from './Card'   // path check kar lena
 
+
 function CardPage() {
 
   const { courseData } = useSelector(state => state.course)
@@ -34,6 +35,7 @@ function CardPage() {
                 category={course.category}
                 price={course.price}
                 id={course._id}
+                reviews={course.reviews}
               />
             ))
           ) : (

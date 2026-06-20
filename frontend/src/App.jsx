@@ -25,10 +25,12 @@ import getPublishedCourse  from './customHooks/getPublishedCourse'
 import CreateLecture from './pages/Educator/CreateLecture'
 import EditLecture from './pages/Educator/EditLecture'
 import ScrollToTop from './component/ScrollToTop'
+import getAllReviews from './customHooks/getAllReviews'
 function App() {
      getCurrentUser();
      getCreatorCourse();
      getPublishedCourse();
+     getAllReviews();
      const {userData} = useSelector(state => state.user);
   return (
     <>

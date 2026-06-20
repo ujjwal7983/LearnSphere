@@ -168,6 +168,23 @@ function ViewCourse() {
         }
     };
 
+    const calculateAvgReview = (reviews) => {
+        if (!reviews || reviews.length === 0) {
+            return 0
+        }
+
+        const total = reviews.reduce(
+            (sum, review) => sum + review.rating,
+            0
+        )
+
+        return (total / reviews.length).toFixed(1)
+    }
+
+    const avgRating = calculateAvgReview(selectedCourse?.reviews)
+
+    // console.log("Avg Rating :", avgRating)
+
 
     return (
         <div className='min-h-screen bg-gray-50 p-6'>
@@ -212,11 +229,11 @@ function ViewCourse() {
 
                             <span className='flex items-center justify-start gap-1'>
                                 <FaStar />
-                                5
+                                {avgRating}
                             </span>
 
                             <span className='text-gray-400'>
-                                (1,200 Reviews)
+                                ({selectedCourse?.reviews?.length} Reviews)
                             </span>
 
                         </div>
