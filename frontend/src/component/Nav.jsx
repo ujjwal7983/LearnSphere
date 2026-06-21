@@ -20,16 +20,21 @@ function Nav() {
     const [showHam, setShowHam] = React.useState(false);
 
     const handleLogOut = async () => {
-        try {
-            const result = await axios.post(serverUrl + "/api/auth/logout", { withCredentials: true });
-            dispatch(setUserData(null));
-            console.log(result.data);
-            toast.success("Logout Successfully");
-        } catch (error) {
-            console.log(error);
-            toast.error(error.response.data.message);
-        }
-    };
+    try {
+        const result = await axios.post(
+            serverUrl + "/api/auth/logout",
+            {},
+            { withCredentials: true }
+        );
+
+        dispatch(setUserData(null));
+        toast.success("Logout Successfully");
+
+    } catch (error) {
+        console.log(error);
+        toast.error(error.response?.data?.message || "Logout Failed");
+    }
+};
 
     return (
         <div>
