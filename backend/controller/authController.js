@@ -3,6 +3,22 @@ import validator from "validator";
 import bcrypt from "bcryptjs";
 import genToken from "../config/token.js";
 import sendMail from "../config/sendMail.js";
+import crypto from "crypto";
+
+// Locally (http, same-site across ports) the cookie needs secure:false and
+// sameSite:"lax" or the browser won't set it at all.
+// In production (https, cross-site between two onrender.com subdomains) it
+// needs secure:true and sameSite:"none" or the browser won't send it back.
+// Switching on NODE_ENV means this never needs to be hand-edited before
+// deploying — locally NODE_ENV is unset (isProduction=false), and Render
+// sets NODE_ENV=production automatically on deploy.
+const isProduction = process.env.NODE_ENV === "production";
+const cookieOptions = {
+    httpOnly: true,
+    secure: isProduction,
+    sameSite: isProduction ? "none" : "lax",
+    maxAge: 7 * 24 * 60 * 60 * 1000
+};
 
 export const signUp = async(req, res) => {
     try{
@@ -26,12 +42,7 @@ export const signUp = async(req, res) => {
             role
         })
         let token = await genToken(user._id);
-        res.cookie("token", token, {
-            httpOnly: true,
-            secure: true,
-            sameSite: "none",
-            maxAge: 7 * 24 * 60 * 60 * 1000
-        });
+        res.cookie("token", token, cookieOptions);
         res.status(201).json({message: "User created successfully", token});
     } catch(error){
         res.status(500).json({message: "Error signing up", error: error.message});
@@ -50,12 +61,7 @@ export const login = async(req, res) => {
             return res.status(400).json({message: "Invalid credentials"});
         }
         let token = await genToken(user._id);
-        res.cookie("token", token, {
-            httpOnly: true,
-            secure: true,
-            sameSite: "none",
-            maxAge: 7 * 24 * 60 * 60 * 1000
-        });
+        res.cookie("token", token, cookieOptions);
         res.status(200).json(user);
     } catch(error){
         res.status(500).json({message: "Error logging in", error: error.message});
@@ -65,11 +71,7 @@ export const login = async(req, res) => {
 export const logout = async (req, res) => {
     try {
 
-        res.clearCookie("token", {
-            httpOnly: true,
-            secure: true,
-            sameSite: "none"
-        });
+        res.clearCookie("token", cookieOptions);
 
         return res.status(200).json({
             message: "Logout successful"
@@ -150,23 +152,21 @@ export const resetPassword = async (req, res) => {
 export const googleAuth = async (req, res) => {
     try {
         const { name, email, role } = req.body
-        const user = await User.findOne({ email });
+        let user = await User.findOne({ email });
         if(!user){
+            const randomPassword = crypto.randomBytes(16).toString("hex")
+            const hashPassword = await bcrypt.hash(randomPassword, 10)
             user = await User.create({
                 name,
                 email,
-                role
+                password: hashPassword,
+                role: role || "student"
             })
         }
         let token = await genToken(user._id);
-        res.cookie("token", token, {
-            httpOnly: true,
-            secure: true,
-            sameSite: "none",
-            maxAge: 7 * 24 * 60 * 60 * 1000
-        });
+        res.cookie("token", token, cookieOptions);
         res.status(200).json(user);
     } catch (error) {
         res.status(500).json({message: "Error in Google Auth", error: error.message});
     }
-};        
+};

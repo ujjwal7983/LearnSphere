@@ -5,6 +5,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { serverUrl } from '../App';
 import { FaArrowLeftLong } from "react-icons/fa6";
 import { setSelectedCourse } from '../redux/courseSlice';
+import { setUserData } from '../redux/userSlice';
 import { FaLock, FaPlayCircle } from "react-icons/fa";
 import { toast } from 'react-toastify';
 import { FaStar } from "react-icons/fa6";
@@ -46,15 +47,13 @@ function ViewCourse() {
 
     }
     const checkEnrollment = () => {
-        const verify = userData?.enrolledCourses?.some((c) =>
-            (typeof c === "string" ? c : c._id).toString() ===
-            courseId?.toString()
-        );
+    const verify = userData?.enrolledCourses?.some((c) =>
+        (typeof c === "string" ? c : c._id).toString() ===
+        courseId?.toString()
+    );
 
-        if (verify) {
-            setIsEnrolled(true);
-        }
-    };
+    setIsEnrolled(!!verify);
+};
 
 
 
@@ -130,6 +129,15 @@ function ViewCourse() {
                         }, { withCredentials: true })
                         setIsEnrolled(true)
                         toast.success(verifyPayment.data.message)
+
+                        // Refresh the logged-in user's data (which includes
+                        // enrolledCourses) so "My Enrolled Courses" shows this
+                        // course immediately, without a manual page refresh.
+                        const updatedUser = await axios.get(
+                            serverUrl + "/api/user/getcurrentuser",
+                            { withCredentials: true }
+                        )
+                        dispatch(setUserData(updatedUser.data))
                     } catch (error) {
                         toast.error(error.response.data.message || "Payment verification failed")
                     }
@@ -159,6 +167,15 @@ function ViewCourse() {
             setLoading(false);
             toast.success("Review Added");
             console.log(result.data);
+
+            // Append the new review to this course's data in Redux so the
+            // rating/review count updates immediately on this page, instead
+            // of only showing up after a manual refresh re-fetches courses.
+            dispatch(setSelectedCourse({
+                ...selectedCourse,
+                reviews: [...(selectedCourse?.reviews || []), result.data]
+            }))
+
             setRating(0);
             setComment("");
         } catch (error) {

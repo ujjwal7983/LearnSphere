@@ -21,11 +21,39 @@ export const createCourse = async (req, res) => {
 
 export const getPublishedCourses =  async (req, res) => {
     try {
-        const courses = await Course.find({ isPublished: true }).populate("lectures reviews")
-        if( !courses ){
-            return res.status(404).json({ message: "No courses found" })
+        // Pagination is opt-in via ?page=&limit= so existing callers that
+        // don't send these params keep getting the full list, unchanged.
+        const { page, limit } = req.query
+
+        if (!page) {
+            const courses = await Course.find({ isPublished: true }).populate("lectures reviews")
+            if( !courses ){
+                return res.status(404).json({ message: "No courses found" })
+            }
+            return res.status(200).json({ message: "Course fetched successfully", courses })
         }
-        res.status(200).json({ message: "Course fetched successfully", courses })
+
+        const pageNum = Math.max(parseInt(page) || 1, 1)
+        const limitNum = Math.max(parseInt(limit) || 10, 1)
+
+        const [courses, total] = await Promise.all([
+            Course.find({ isPublished: true })
+                .populate("lectures reviews")
+                .skip((pageNum - 1) * limitNum)
+                .limit(limitNum),
+            Course.countDocuments({ isPublished: true })
+        ])
+
+        res.status(200).json({
+            message: "Course fetched successfully",
+            courses,
+            pagination: {
+                page: pageNum,
+                limit: limitNum,
+                totalCourses: total,
+                totalPages: Math.ceil(total / limitNum)
+            }
+        })
     } catch (error) {
         res.status(500).json({ message: "failed to find isPublished courses", error })
     }

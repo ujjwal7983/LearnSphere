@@ -17,8 +17,21 @@ const port = process.env.PORT || 8000;
 app.use(express.json());
 app.use(cookiesParser());
 
+// CLIENT_URL can hold multiple comma-separated origins, e.g.
+// "http://localhost:5173,https://learnsphere-1-xmil.onrender.com"
+const allowedOrigins = (process.env.CLIENT_URL || "")
+    .split(",")
+    .map(origin => origin.trim())
+    .filter(Boolean)
+
 app.use(cors({
-    origin: "https://learnsphere-1-xmil.onrender.com",
+    origin: (origin, callback) => {
+        if (!origin || allowedOrigins.includes(origin)) {
+            callback(null, true)
+        } else {
+            callback(new Error(`CORS: origin ${origin} not allowed`))
+        }
+    },
     credentials: true,
 }))
 
