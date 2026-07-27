@@ -1,5 +1,6 @@
 import razorpay from "razorpay"
 import dotenv from "dotenv"
+import crypto from "crypto"
 import Course from "../model/courseModel.js"
 import User from "../model/userModel.js"
 
@@ -31,7 +32,24 @@ export const RazorPayOrder = async (req, res) => {
 
 export const verifyPayment = async (req, res) => {
     try {
-        const { courseId, userId, razorpay_order_id } = req.body;
+        const { courseId, userId, razorpay_order_id, razorpay_payment_id, razorpay_signature } = req.body;
+
+        if (!razorpay_order_id || !razorpay_payment_id || !razorpay_signature) {
+            return res.status(400).json({ message: "Missing payment verification fields" })
+        }
+
+        // Verify authenticity using HMAC-SHA256: recompute the signature from
+        // order_id + payment_id using the key secret and compare, so a
+        // forged/replayed request can't be treated as a real payment.
+        const expectedSignature = crypto
+            .createHmac("sha256", process.env.RAZORPAY_KEY_SECRET)
+            .update(`${razorpay_order_id}|${razorpay_payment_id}`)
+            .digest("hex")
+
+        if (expectedSignature !== razorpay_signature) {
+            return res.status(400).json({ message: "Payment verification failed: invalid signature" })
+        }
+
         const orderInfo = await RazorPayInstance.orders.fetch(razorpay_order_id)
         console.log("ORDER =", orderInfo)
         console.log("STATUS =", orderInfo.status)

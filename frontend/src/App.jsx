@@ -19,7 +19,12 @@ import ViewCourse from './pages/ViewCourses'
 import ViewLectures from './pages/ViewLectures'
 import MyEnrolledCourses from './pages/MyEnrolledCourses'
 
-export const serverUrl = "https://learnsphere1-2g57.onrender.com"
+// In dev (npm run dev) this points to your local backend so CORS/cookies
+// match what's set in backend/.env (CLIENT_URL includes localhost:5173).
+// In a production build it points to the deployed Render backend.
+export const serverUrl = import.meta.env.DEV
+    ? "http://localhost:8000"
+    : "https://learnsphere1-2g57.onrender.com"
 import {ToastContainer} from 'react-toastify'
 import getPublishedCourse  from './customHooks/getPublishedCourse'
 import CreateLecture from './pages/Educator/CreateLecture'

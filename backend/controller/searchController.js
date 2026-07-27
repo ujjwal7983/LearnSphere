@@ -14,6 +14,23 @@ export const searchWithAi = async (req, res) => {
       });
     }
 
+    // Try a direct DB match first — cheaper and faster than an LLM call.
+    // Only fall back to Gemini intent classification if nothing matches.
+    const course = await Course.find({
+      isPublished: true,
+      $or: [
+        { title: { $regex: input, $options: "i" } },
+        { subTitle: { $regex: input, $options: "i" } },
+        { description: { $regex: input, $options: "i" } },
+        { category: { $regex: input, $options: "i" } },
+        { level: { $regex: input, $options: "i" } },
+      ],
+    });
+
+    if (course.length > 0) {
+      return res.status(200).json(course);
+    }
+
     const ai = new GoogleGenAI({
       apiKey: process.env.GEMINI_API_KEY,
     });
@@ -55,21 +72,6 @@ Query: ${input}
 
     console.log("User Query:", input);
     console.log("Gemini Keyword:", keyword);
-
-    const course = await Course.find({
-      isPublished: true,
-      $or: [
-        { title: { $regex: input, $options: "i" } },
-        { subTitle: { $regex: input, $options: "i" } },
-        { description: { $regex: input, $options: "i" } },
-        { category: { $regex: input, $options: "i" } },
-        { level: { $regex: input, $options: "i" } },
-      ],
-    });
-
-    if (course.length > 0) {
-      return res.status(200).json(course);
-    }
 
     const aiCourses = await Course.find({
       isPublished: true,

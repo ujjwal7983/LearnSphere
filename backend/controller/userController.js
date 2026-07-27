@@ -17,15 +17,16 @@ export const updateProfile = async (req, res) => {
     try {
         const userId = req.userId;
         const {description, name} = req.body
-        let photoUrl
+        const updateData = {}
+        if(name !== undefined) updateData.name = name
+        if(description !== undefined) updateData.description = description
         if(req.file) {
-            photoUrl =await uploadOnCloudinary(req.file.path)
-        } 
-        const user = await User.findByIdAndUpdate(userId, {name, description, photoUrl});
+            updateData.photoUrl = await uploadOnCloudinary(req.file.path)
+        }
+        const user = await User.findByIdAndUpdate(userId, updateData, { new: true }).select("-password")
         if(!user) {
             return res.status(404).json({message:"User not Found"})
         }
-        await user.save()
         return res.status(200).json(user)
     } catch (error) {
         return res.status(500).json({message: `updateUser error ${error}`})
