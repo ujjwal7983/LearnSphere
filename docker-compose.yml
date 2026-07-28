@@ -1,5 +1,6 @@
 services:
    backend:
+     image: lms-backend
      build: ./backend
      ports:
         - "8000:8000"
